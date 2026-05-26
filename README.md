@@ -60,10 +60,23 @@ cult-game/
 - [ ] Heat system: police attention rises with illegal activity
 - [ ] Wanted level UI overlay
 
-### Sprint 5 — Audio & Polish (Planned)
-- [ ] Ambient sound, footstep SFX
-- [ ] Tile-based world art pass
-- [ ] Basic menu / pause screen
+### Sprint 8 — Endgame Paths Phase 1 (Done)
+- [x] StorySystem: milestones at 10/30/75/150 members
+- [x] Three cult paths chosen at 75 members (Waco / Scientology / Heaven's Gate)
+- [x] MissionSystem: 3-mission chain (recruit, earn, mug)
+- [x] Mechanical hooks: heat decay multiplier, financier bonus, recruiter interval
+
+### Sprint 9 — Endgame Phase 2 (Done)
+- [x] EndgameSystem singleton — win/loss detection and full-screen outcome overlay
+- [x] Win condition: CultSize >= 200 (fires after StorySystem milestone popup dismissed)
+- [x] Loss condition 1: Player health reaches 0 (new Player.TakeDamage method)
+- [x] Loss condition 2: All followers defect/lost after cult grew past 5
+- [x] PoliceCar contact damage: 10 HP/s when car is within 40 px of player
+- [x] Extended mission chain: 6 total missions (+Inner Circle slot, +wanted stars, +50 followers, +$5k, +mug 20)
+- [x] MissionSystem.CompletedMissions counter exposed for EndgameSystem summary
+- [x] HUD mission status label (auto-created if scene lacks node)
+- [x] Endgame screen: outcome title + path summary + stats + Restart/Quit buttons
+- [x] EndgameSystem registered as autoload in project.godot
 
 ---
 

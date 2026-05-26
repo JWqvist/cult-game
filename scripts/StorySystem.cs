@@ -14,7 +14,7 @@ public partial class StorySystem : Node
     public CultPath CurrentPath { get; private set; } = CultPath.None;
 
     private HashSet<int> _firedMilestones = new HashSet<int>();
-    private static readonly int[] Milestones = { 10, 30, 75, 150 };
+    private static readonly int[] Milestones = { 10, 30, 75, 150, 200 };
 
     // Popup UI
     private CanvasLayer _canvas;
@@ -94,6 +94,11 @@ public partial class StorySystem : Node
                 };
                 ShowPopup(msg, showDismiss: true, showChoices: false);
                 break;
+            case 200:
+                // Win condition — notify EndgameSystem after popup dismissed
+                ShowPopup("200 souls have answered the call. Your legend is sealed.",
+                    showDismiss: true, showChoices: false);
+                break;
         }
     }
 
@@ -108,6 +113,12 @@ public partial class StorySystem : Node
 
     private void DismissPopup()
     {
+        // If the 200-member milestone just fired, trigger win
+        if (_firedMilestones.Contains(200) && CurrentPath != CultPath.None
+            || (_firedMilestones.Contains(200) && GameManager.Instance?.CultSize >= 200))
+        {
+            EndgameSystem.Instance?.TriggerWin();
+        }
         _popupPanel.Visible = false;
         _popupOpen = false;
     }

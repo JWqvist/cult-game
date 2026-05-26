@@ -7,6 +7,7 @@ public partial class HUD : CanvasLayer
     private Label _cultStatsLabel;
     private Label _wantedLabel;
     private Label _icLabel;
+    private Label _missionLabel;
     private Player _player;
 
     public override void _Ready()
@@ -16,6 +17,14 @@ public partial class HUD : CanvasLayer
         _cultStatsLabel = GetNode<Label>("VBoxContainer/CultStatsLabel");
         _wantedLabel = GetNode<Label>("VBoxContainer/WantedLabel");
         _icLabel = GetNode<Label>("VBoxContainer/ICLabel");
+        // MissionLabel may not exist in older scene files; create it if missing
+        _missionLabel = GetNodeOrNull<Label>("VBoxContainer/MissionLabel");
+        if (_missionLabel == null)
+        {
+            _missionLabel = new Label();
+            _missionLabel.Name = "MissionLabel";
+            GetNode<VBoxContainer>("VBoxContainer").AddChild(_missionLabel);
+        }
     }
 
     public override void _Process(double delta)
@@ -51,6 +60,13 @@ public partial class HUD : CanvasLayer
             int e = InnerCircle.Instance.EnforcerCount;
             int f = InnerCircle.Instance.FinancierCount;
             _icLabel.Text = $"IC: R:{r} E:{e} F:{f}";
+        }
+
+        if (MissionSystem.Instance != null && _missionLabel != null)
+        {
+            string status = MissionSystem.Instance.MissionStatusText;
+            _missionLabel.Text = status;
+            _missionLabel.Visible = !string.IsNullOrEmpty(status);
         }
     }
 }

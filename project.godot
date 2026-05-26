@@ -19,6 +19,7 @@ HeatSystem="*res://scripts/HeatSystem.cs"
 InnerCircle="*res://scripts/InnerCircle.cs"
 StorySystem="*res://scripts/StorySystem.cs"
 MissionSystem="*res://scripts/MissionSystem.cs"
+EndgameSystem="*res://scripts/EndgameSystem.cs"
 
 [display]
 
