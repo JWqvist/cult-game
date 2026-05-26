@@ -7,7 +7,7 @@ public partial class Vehicle : CharacterBody2D
     [Export] public float Acceleration = 150f;
     [Export] public float Friction = 100f;
     [Export] public float TurnSpeed = 2.2f;
-    [Export] public float InteractRange = 55f;
+    [Export] public float InteractRange = 80f;
 
     public bool IsOccupied { get; private set; } = false;
 

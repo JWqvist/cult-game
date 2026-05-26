@@ -49,7 +49,11 @@ public partial class RecruitSystem : Node
         }
 
         if (!_dialogueActive && Input.IsActionJustPressed("interact"))
+        {
+            if (_player is Player playerNode && playerNode.IsInVehicle)
+                return;
             TryOpenDialogue();
+        }
     }
 
     public override void _Input(InputEvent ev)

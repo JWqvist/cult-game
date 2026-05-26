@@ -13,6 +13,7 @@ public partial class Player : CharacterBody2D
     private string _lastDirection = "down";
 
     private Vehicle _currentVehicle = null;
+    public bool IsInVehicle => _currentVehicle != null;
 
     public override void _Ready()
     {
@@ -22,17 +23,19 @@ public partial class Player : CharacterBody2D
         Inventory = GetNode<Inventory>("Inventory");
     }
 
-    public override void _PhysicsProcess(double delta)
+    public override void _UnhandledInput(InputEvent @event)
     {
-        // Handle carjack enter / exit
-        if (Input.IsActionJustPressed("interact"))
+        if (@event.IsActionPressed("interact"))
         {
             if (_currentVehicle != null)
                 ExitVehicle();
             else
                 TryEnterVehicle();
         }
+    }
 
+    public override void _PhysicsProcess(double delta)
+    {
         // While driving: follow the vehicle position so the Camera2D tracks it
         if (_currentVehicle != null)
         {

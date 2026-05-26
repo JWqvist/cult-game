@@ -28,6 +28,11 @@ public partial class Pedestrian : NPC
         _idleTimer = GD.Randf() * IdleTime; // stagger start times
     }
 
+    public void OnAttacked()
+    {
+        _state = State.FLEEING;
+    }
+
     public void StartFollowing()
     {
         IsRecruited = true;
@@ -50,12 +55,8 @@ public partial class Pedestrian : NPC
 
         float distToPlayer = _player != null ? GlobalPosition.DistanceTo(_player.GlobalPosition) : float.MaxValue;
 
-        // State transitions (FOLLOWING overrides flee/wander)
-        if (_state != State.FLEEING && _state != State.FOLLOWING && distToPlayer < FleeRadius)
-        {
-            _state = State.FLEEING;
-        }
-        else if (_state == State.FLEEING && distToPlayer > StopFleeRadius)
+        // State transitions
+        if (_state == State.FLEEING && distToPlayer > StopFleeRadius)
         {
             _state = State.IDLE;
             _idleTimer = IdleTime;
