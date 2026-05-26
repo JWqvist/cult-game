@@ -1,8 +1,10 @@
 using Godot;
+using System.Collections.Generic;
 
 /// <summary>
 /// Singleton autoload — tracks global player stats.
 /// Access via: GameManager.Instance
+/// CultSize = 1 (player) + Followers.Count
 /// </summary>
 public partial class GameManager : Node
 {
@@ -10,11 +12,14 @@ public partial class GameManager : Node
 
     // Player stats
     public float Money { get; private set; } = 0f;
-    public int CultSize { get; private set; } = 1;  // starts with the player
+    public int CultSize => 1 + Followers.Count;   // player + recruited followers
     public int HeatLevel { get; private set; } = 0; // 0-5, police attention
 
-    // Donations: $5 per follower per second (simplified day cycle)
-    public float DonationsPerDay => CultSize * 5.0f;
+    // All recruited followers
+    public List<Follower> Followers { get; private set; } = new List<Follower>();
+
+    // Donations: $5 per cult member per second, boosted by Financiers
+    public float DonationsPerDay => CultSize * 5.0f * (InnerCircle.Instance?.DonationMultiplier ?? 1f);
 
     [Signal]
     public delegate void StatsChangedEventHandler();
@@ -27,8 +32,8 @@ public partial class GameManager : Node
 
     public override void _Process(double delta)
     {
-        // Followers donate $5/follower/second (simplified)
-        Money += CultSize * 5.0f * (float)delta;
+        float multiplier = InnerCircle.Instance?.DonationMultiplier ?? 1f;
+        Money += CultSize * 5.0f * multiplier * (float)delta;
         EmitSignal(SignalName.StatsChanged);
     }
 
@@ -46,15 +51,19 @@ public partial class GameManager : Node
 
     public void AddFollower()
     {
-        CultSize++;
+        var follower = new Follower();
+        Followers.Add(follower);
         EmitSignal(SignalName.StatsChanged);
-        GD.Print("[GameManager] Cult size is now: ", CultSize);
+        GD.Print("[GameManager] Recruited ", follower.Name, ". Cult size: ", CultSize);
     }
 
-    public void RemoveFollower()
+    public void RemoveFollower(Follower follower)
     {
-        CultSize = Mathf.Max(1, CultSize - 1);
-        EmitSignal(SignalName.StatsChanged);
+        if (Followers.Remove(follower))
+        {
+            EmitSignal(SignalName.StatsChanged);
+            GD.Print("[GameManager] Lost follower ", follower.Name, ". Cult size: ", CultSize);
+        }
     }
 
     public void IncreaseHeat(int amount = 1)

@@ -25,3 +25,6 @@ text = "Followers: 1 | $0"
 [node name="WantedLabel" type="Label" parent="VBoxContainer"]
 text = ""
 visible = false
+
+[node name="ICLabel" type="Label" parent="VBoxContainer"]
+text = "IC: R:0 E:0 F:0"

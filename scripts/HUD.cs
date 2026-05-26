@@ -6,6 +6,7 @@ public partial class HUD : CanvasLayer
     private Label _equippedLabel;
     private Label _cultStatsLabel;
     private Label _wantedLabel;
+    private Label _icLabel;
     private Player _player;
 
     public override void _Ready()
@@ -14,6 +15,7 @@ public partial class HUD : CanvasLayer
         _equippedLabel = GetNode<Label>("VBoxContainer/EquippedLabel");
         _cultStatsLabel = GetNode<Label>("VBoxContainer/CultStatsLabel");
         _wantedLabel = GetNode<Label>("VBoxContainer/WantedLabel");
+        _icLabel = GetNode<Label>("VBoxContainer/ICLabel");
     }
 
     public override void _Process(double delta)
@@ -41,6 +43,14 @@ public partial class HUD : CanvasLayer
             int stars = HeatSystem.Instance.WantedStars;
             _wantedLabel.Text = stars > 0 ? $"Wanted: {new string('*', stars)}" : "";
             _wantedLabel.Visible = stars > 0;
+        }
+
+        if (InnerCircle.Instance != null)
+        {
+            int r = InnerCircle.Instance.RecruiterCount;
+            int e = InnerCircle.Instance.EnforcerCount;
+            int f = InnerCircle.Instance.FinancierCount;
+            _icLabel.Text = $"IC: R:{r} E:{e} F:{f}";
         }
     }
 }

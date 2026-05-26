@@ -16,6 +16,7 @@ config/icon="res://icon.svg"
 
 GameManager="*res://scripts/GameManager.cs"
 HeatSystem="*res://scripts/HeatSystem.cs"
+InnerCircle="*res://scripts/InnerCircle.cs"
 
 [display]
 
