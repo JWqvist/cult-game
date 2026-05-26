@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://cult_policecar"]
+
+[ext_resource type="Script" path="res://scripts/PoliceCar.cs" id="1_script"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
+size = Vector2(24, 42)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_1"]
+size = Vector2(24, 42)
+
+[node name="PoliceCar" type="CharacterBody2D"]
+script = ExtResource("1_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_1")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = SubResource("PlaceholderTexture2D_1")
+modulate = Color(0.1, 0.1, 1, 1)

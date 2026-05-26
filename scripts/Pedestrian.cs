@@ -12,6 +12,8 @@ public partial class Pedestrian : NPC
     private const float IdleTime = 2f;
     private const float ArrivalThreshold = 10f;
 
+    public bool IsRecruited { get; private set; } = false;
+
     private State _state = State.IDLE;
     private Vector2 _targetPosition;
     private float _idleTimer = 0f;
@@ -28,6 +30,7 @@ public partial class Pedestrian : NPC
 
     public void StartFollowing()
     {
+        IsRecruited = true;
         _state = State.FOLLOWING;
         float angle = GD.Randf() * Mathf.Tau;
         _followOffset = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * (30f + GD.Randf() * 40f);
