@@ -13,6 +13,7 @@ public partial class HeatSystem : Node
     public int WantedStars => Mathf.Clamp(Mathf.CeilToInt(HeatLevel / 1.67f), 0, 3);
 
     private const float DecayRate = 0.02f;
+    private float _decayMultiplier = 1.0f;
     private const float SpawnThreshold = 2.0f;
     private const float DespawnThreshold = 1.0f;
     private const float BribeRange = 120f;
@@ -36,7 +37,7 @@ public partial class HeatSystem : Node
     {
         if (HeatLevel > 0f)
         {
-            HeatLevel = Mathf.Max(0f, HeatLevel - DecayRate * (float)delta);
+            HeatLevel = Mathf.Max(0f, HeatLevel - DecayRate * _decayMultiplier * (float)delta);
             EmitSignal(SignalName.HeatChanged);
         }
 
@@ -59,6 +60,13 @@ public partial class HeatSystem : Node
         HeatLevel = Mathf.Clamp(HeatLevel + amount, 0f, 5f);
         EmitSignal(SignalName.HeatChanged);
         GD.Print("[HeatSystem] Heat: ", HeatLevel.ToString("F2"), " Stars: ", WantedStars);
+    }
+
+    /// <summary>Set a multiplier on passive heat decay (Waco path: 0.5 = slower decay = more aggressive police).</summary>
+    public void SetDecayMultiplier(float multiplier)
+    {
+        _decayMultiplier = Mathf.Max(0f, multiplier);
+        GD.Print($"[HeatSystem] DecayMultiplier set to {_decayMultiplier:F2}");
     }
 
     public void ClearHeat()
