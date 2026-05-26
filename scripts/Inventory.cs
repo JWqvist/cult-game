@@ -30,4 +30,6 @@ public partial class Inventory : Node
     }
 
     public bool IsGunEquipped() => CurrentSlot == 2 && _slots[2] == "Gun";
+
+    public string GetSlotLabel(int i) => (i >= 0 && i < _slots.Length) ? _slots[i] : "";
 }

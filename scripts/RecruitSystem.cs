@@ -13,7 +13,12 @@ public partial class RecruitSystem : Node
     private const float MugMaxMoney = 30f;
     private const float MugHeat = 0.5f;
 
-    private Label _dialogueLabel;
+    private static readonly Color Gold   = new Color(1.00f, 0.84f, 0.00f);
+    private static readonly Color DarkBg = new Color(0.00f, 0.00f, 0.00f, 0.80f);
+
+    private PanelContainer _dialoguePanel;
+    private Label _npcNameLabel;
+    private Label _optionsLabel;
     private bool _dialogueActive = false;
     private bool _targetIsRecruited = false;
     private Pedestrian _targetPedestrian = null;
@@ -25,18 +30,45 @@ public partial class RecruitSystem : Node
         canvas.Layer = 20;
         AddChild(canvas);
 
-        _dialogueLabel = new Label();
-        _dialogueLabel.Text = "Recruit [Y] | Mug [M] | Cancel [N]";
-        _dialogueLabel.Visible = false;
-        _dialogueLabel.AnchorLeft = 0.5f;
-        _dialogueLabel.AnchorRight = 0.5f;
-        _dialogueLabel.AnchorTop = 0.5f;
-        _dialogueLabel.AnchorBottom = 0.5f;
-        _dialogueLabel.OffsetLeft = -120f;
-        _dialogueLabel.OffsetRight = 120f;
-        _dialogueLabel.OffsetTop = -16f;
-        _dialogueLabel.OffsetBottom = 16f;
-        canvas.AddChild(_dialogueLabel);
+        // Styled dark panel, slightly above screen center
+        _dialoguePanel = new PanelContainer();
+        _dialoguePanel.AnchorLeft   = 0.5f;
+        _dialoguePanel.AnchorRight  = 0.5f;
+        _dialoguePanel.AnchorTop    = 0.5f;
+        _dialoguePanel.AnchorBottom = 0.5f;
+        _dialoguePanel.OffsetLeft   = -160f;
+        _dialoguePanel.OffsetRight  =  160f;
+        _dialoguePanel.OffsetTop    = -100f;
+        _dialoguePanel.OffsetBottom =  -4f;
+        _dialoguePanel.Visible = false;
+
+        var style = new StyleBoxFlat();
+        style.BgColor = DarkBg;
+        style.BorderColor = Gold;
+        style.BorderWidthLeft = style.BorderWidthRight = style.BorderWidthTop = style.BorderWidthBottom = 2;
+        style.CornerRadiusTopLeft = style.CornerRadiusTopRight = style.CornerRadiusBottomLeft = style.CornerRadiusBottomRight = 6;
+        style.ContentMarginLeft = style.ContentMarginRight = 14f;
+        style.ContentMarginTop = style.ContentMarginBottom = 10f;
+        _dialoguePanel.AddThemeStyleboxOverride("panel", style);
+        canvas.AddChild(_dialoguePanel);
+
+        var vbox = new VBoxContainer();
+        vbox.AddThemeConstantOverride("separation", 6);
+        _dialoguePanel.AddChild(vbox);
+
+        _npcNameLabel = new Label();
+        _npcNameLabel.Text = "Stranger";
+        _npcNameLabel.HorizontalAlignment = HorizontalAlignment.Center;
+        _npcNameLabel.AddThemeColorOverride("font_color", Gold);
+        _npcNameLabel.AddThemeFontSizeOverride("font_size", 13);
+        vbox.AddChild(_npcNameLabel);
+
+        _optionsLabel = new Label();
+        _optionsLabel.Text = "[Y] Recruit    [M] Mug    [N] Cancel";
+        _optionsLabel.HorizontalAlignment = HorizontalAlignment.Center;
+        _optionsLabel.AddThemeColorOverride("font_color", new Color(0.88f, 0.88f, 0.88f));
+        _optionsLabel.AddThemeFontSizeOverride("font_size", 12);
+        vbox.AddChild(_optionsLabel);
     }
 
     public override void _Process(double delta)
@@ -104,10 +136,15 @@ public partial class RecruitSystem : Node
         {
             _targetPedestrian = nearest;
             _targetIsRecruited = nearest.IsRecruited;
-            _dialogueLabel.Text = _targetIsRecruited
+
+            int nameNum = Mathf.Abs((int)(nearest.GlobalPosition.X + nearest.GlobalPosition.Y)) % 99 + 1;
+            _npcNameLabel.Text = "Stranger #" + nameNum;
+
+            _optionsLabel.Text = _targetIsRecruited
                 ? "Already a follower."
-                : "Recruit [Y] | Mug [M] | Cancel [N]";
-            _dialogueLabel.Visible = true;
+                : "[Y] Recruit    [M] Mug    [N] Cancel";
+
+            _dialoguePanel.Visible = true;
             _dialogueActive = true;
         }
     }
@@ -128,10 +165,13 @@ public partial class RecruitSystem : Node
         {
             _targetPedestrian.StartFollowing();
             GameManager.Instance.AddFollower();
-            GD.Print("[RecruitSystem] Recruited! CultSize=", GameManager.Instance.CultSize);
+            int total = GameManager.Instance.CultSize;
+            ToastManager.Show("New follower! (" + total + " total)", ToastManager.ColorGood);
+            GD.Print("[RecruitSystem] Recruited! CultSize=", total);
         }
         else
         {
+            ToastManager.Show("Recruitment failed.", new Color(0.70f, 0.70f, 0.70f));
             GD.Print("[RecruitSystem] Recruitment failed.");
         }
 
@@ -147,6 +187,7 @@ public partial class RecruitSystem : Node
         float stolen = MugMinMoney + GD.Randf() * (MugMaxMoney - MugMinMoney);
         GameManager.Instance.AddMoney(stolen);
         HeatSystem.Instance?.AddHeat(MugHeat);
+        ToastManager.Show("+$" + (int)stolen, ToastManager.ColorMoney);
         GD.Print("[RecruitSystem] Mugged for $", stolen.ToString("F0"));
 
         _targetPedestrian = null;
@@ -154,7 +195,7 @@ public partial class RecruitSystem : Node
 
     private void HideDialogue()
     {
-        _dialogueLabel.Visible = false;
+        _dialoguePanel.Visible = false;
         _dialogueActive = false;
     }
 }

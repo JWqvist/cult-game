@@ -31,6 +31,12 @@ public partial class Player : CharacterBody2D
         _animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
         _sprite = GetNode<Sprite2D>("Sprite2D");
         Inventory = GetNode<Inventory>("Inventory");
+
+        if (AssetManager.Instance != null)
+        {
+            _sprite.Texture = AssetManager.Instance.GetPlayerTexture("down");
+            _sprite.Modulate = Colors.White;
+        }
     }
 
     public override void _UnhandledInput(InputEvent @event)
@@ -121,36 +127,46 @@ public partial class Player : CharacterBody2D
     private void UpdateDirectionAndAnimation(Vector2 dir, bool running)
     {
         string animPrefix = running ? "run" : "walk";
+        string newDir = _lastDirection;
 
         if (Mathf.Abs(dir.X) > Mathf.Abs(dir.Y))
         {
             if (dir.X > 0)
             {
-                _lastDirection = "right";
-                _sprite.FlipH = false;
+                newDir = "right";
+                _sprite.FlipH = true;
                 PlayAnimation(animPrefix + "_right");
             }
             else
             {
-                _lastDirection = "left";
+                newDir = "left";
                 _sprite.FlipH = false;
                 PlayAnimation(animPrefix + "_left");
             }
         }
         else
         {
+            _sprite.FlipH = false;
             if (dir.Y < 0)
             {
-                _lastDirection = "up";
-                _sprite.FlipH = false;
+                newDir = "up";
                 PlayAnimation(animPrefix + "_up");
             }
             else
             {
-                _lastDirection = "down";
-                _sprite.FlipH = false;
+                newDir = "down";
                 PlayAnimation(animPrefix + "_down");
             }
+        }
+
+        if (newDir != _lastDirection && AssetManager.Instance != null)
+        {
+            _lastDirection = newDir;
+            _sprite.Texture = AssetManager.Instance.GetPlayerTexture(newDir);
+        }
+        else
+        {
+            _lastDirection = newDir;
         }
     }
 

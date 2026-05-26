@@ -40,6 +40,8 @@ public partial class GameManager : Node
     public void AddMoney(float amount)
     {
         Money += amount;
+        if (amount >= 50f)
+            ToastManager.Show("+$" + (int)amount, ToastManager.ColorMoney);
         EmitSignal(SignalName.StatsChanged);
     }
 

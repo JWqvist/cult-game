@@ -20,12 +20,21 @@ public partial class Pedestrian : NPC
     private Node2D _player;
     private Vector2 _followOffset;
 
+    private Sprite2D _sprite;
+
     public override void _Ready()
     {
         base._Ready(); // adds to "npcs" group
         AddToGroup("pedestrians");
         _targetPosition = GlobalPosition;
         _idleTimer = GD.Randf() * IdleTime; // stagger start times
+        _sprite = GetNode<Sprite2D>("Sprite2D");
+
+        if (AssetManager.Instance != null)
+        {
+            _sprite.Texture = AssetManager.Instance.GetNPCTexture("down", false);
+            _sprite.Modulate = Colors.White;
+        }
     }
 
     public void OnAttacked()
@@ -37,6 +46,8 @@ public partial class Pedestrian : NPC
     {
         IsRecruited = true;
         _state = State.FOLLOWING;
+        if (AssetManager.Instance != null && _sprite != null)
+            _sprite.Texture = AssetManager.Instance.GetNPCTexture("down", true);
         float angle = GD.Randf() * Mathf.Tau;
         _followOffset = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * (30f + GD.Randf() * 40f);
     }

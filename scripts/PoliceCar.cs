@@ -16,6 +16,11 @@ public partial class PoliceCar : CharacterBody2D
     public override void _Ready()
     {
         AddToGroup("police");
+        if (AssetManager.Instance != null)
+        {
+            GetNode<Sprite2D>("Sprite2D").Texture = AssetManager.Instance.GetCarTexture("police");
+            GetNode<Sprite2D>("Sprite2D").Modulate = Colors.White;
+        }
     }
 
     public override void _PhysicsProcess(double delta)
