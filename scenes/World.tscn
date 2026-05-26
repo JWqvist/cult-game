@@ -1,9 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://cult_world"]
+[gd_scene load_steps=8 format=3 uid="uid://cult_world"]
 
 [ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/Vehicle.tscn" id="2_vehicle"]
 [ext_resource type="PackedScene" path="res://scenes/Pedestrian.tscn" id="3_pedestrian"]
 [ext_resource type="PackedScene" path="res://scenes/TrafficCar.tscn" id="4_trafficcar"]
+[ext_resource type="PackedScene" path="res://scenes/HUD.tscn" id="5_hud"]
+[ext_resource type="PackedScene" path="res://scenes/ItemPickup.tscn" id="6_itempickup"]
 
 [sub_resource type="TileSet" id="TileSet_1"]
 tile_size = Vector2i(32, 32)
@@ -62,3 +64,17 @@ Waypoints = PackedVector2Array(-600, -600, 600, -600, 600, 600, -600, 600)
 [node name="TrafficCar3" parent="." instance=ExtResource("4_trafficcar")]
 position = Vector2(-200, 600)
 Waypoints = PackedVector2Array(-200, -700, 700, -200, 200, 700, -700, 200)
+
+[node name="HUD" parent="." instance=ExtResource("5_hud")]
+
+[node name="MeleePickup" parent="." instance=ExtResource("6_itempickup")]
+position = Vector2(560, 330)
+item_type = "MeleeWeapon"
+
+[node name="GunPickup" parent="." instance=ExtResource("6_itempickup")]
+position = Vector2(720, 330)
+item_type = "Gun"
+
+[node name="GunPickup2" parent="." instance=ExtResource("6_itempickup")]
+position = Vector2(640, 430)
+item_type = "Gun"

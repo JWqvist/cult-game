@@ -1,6 +1,6 @@
 using Godot;
 
-public partial class Pedestrian : CharacterBody2D
+public partial class Pedestrian : NPC
 {
     private enum State { IDLE, WALKING, FLEEING }
 
@@ -19,6 +19,7 @@ public partial class Pedestrian : CharacterBody2D
 
     public override void _Ready()
     {
+        base._Ready(); // adds to "npcs" group
         AddToGroup("pedestrians");
         _targetPosition = GlobalPosition;
         _idleTimer = GD.Randf() * IdleTime; // stagger start times
