@@ -5,6 +5,9 @@ public partial class Player : CharacterBody2D
     private const float WalkSpeed = 80f;
     private const float RunSpeed = 160f;
 
+    public float Health = 100f;
+    public Inventory Inventory { get; private set; }
+
     private AnimationPlayer _animationPlayer;
     private Sprite2D _sprite;
     private string _lastDirection = "down";
@@ -13,8 +16,10 @@ public partial class Player : CharacterBody2D
 
     public override void _Ready()
     {
+        AddToGroup("player");
         _animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
         _sprite = GetNode<Sprite2D>("Sprite2D");
+        Inventory = GetNode<Inventory>("Inventory");
     }
 
     public override void _PhysicsProcess(double delta)
