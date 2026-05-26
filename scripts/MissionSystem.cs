@@ -1,7 +1,7 @@
 using Godot;
 using System.Collections.Generic;
 
-public enum ObjectiveType { RecruitN, EarnMoney, MugN }
+public enum ObjectiveType { RecruitN, EarnMoney, MugN, InnerCircleN, ReachHeatN }
 
 public class Mission
 {
@@ -24,10 +24,14 @@ public partial class MissionSystem : Node
     private int _missionIndex = 0;
     public Mission ActiveMission => _missionIndex < _missions.Count ? _missions[_missionIndex] : null;
 
+    /// <summary>Number of missions completed so far.</summary>
+    public int CompletedMissions => _missionIndex;
+
     // Objective tracking
     private int _mugCount = 0;
     private float _totalEarned = 0f;
     private float _lastMoney = 0f;
+    private int _maxHeatReached = 0;
 
     // "COMPLETE!" flash timer
     private float _completeTimer = 0f;
@@ -72,6 +76,14 @@ public partial class MissionSystem : Node
             _totalEarned += currentMoney - _lastMoney;
         _lastMoney = currentMoney;
 
+        // Track peak heat for ReachHeatN objectives
+        if (HeatSystem.Instance != null)
+        {
+            int stars = HeatSystem.Instance.WantedStars;
+            if (stars > _maxHeatReached)
+                _maxHeatReached = stars;
+        }
+
         CheckObjective();
     }
 
@@ -91,10 +103,13 @@ public partial class MissionSystem : Node
 
         bool complete = ActiveMission.Type switch
         {
-            ObjectiveType.RecruitN  => GameManager.Instance.Followers.Count >= ActiveMission.Target,
-            ObjectiveType.EarnMoney => _totalEarned >= (float)ActiveMission.Target,
-            ObjectiveType.MugN      => _mugCount >= ActiveMission.Target,
-            _                       => false
+            ObjectiveType.RecruitN      => GameManager.Instance.Followers.Count >= ActiveMission.Target,
+            ObjectiveType.EarnMoney     => _totalEarned >= (float)ActiveMission.Target,
+            ObjectiveType.MugN          => _mugCount >= ActiveMission.Target,
+            ObjectiveType.InnerCircleN  => InnerCircle.Instance != null &&
+                                           InnerCircle.Instance.InnerCircleMembers.Count >= ActiveMission.Target,
+            ObjectiveType.ReachHeatN    => _maxHeatReached >= ActiveMission.Target,
+            _                           => false
         };
 
         if (complete)
@@ -150,6 +165,42 @@ public partial class MissionSystem : Node
             Type        = ObjectiveType.MugN,
             Target      = 5,
             Reward      = 150f
+        });
+        // Sprint 9: extended mission chain
+        _missions.Add(new Mission
+        {
+            Description = "Inner Sanctum — Fill 2 Inner Circle slots",
+            Type        = ObjectiveType.InnerCircleN,
+            Target      = 2,
+            Reward      = 300f
+        });
+        _missions.Add(new Mission
+        {
+            Description = "Most Wanted — Reach 2 wanted stars",
+            Type        = ObjectiveType.ReachHeatN,
+            Target      = 2,
+            Reward      = 400f
+        });
+        _missions.Add(new Mission
+        {
+            Description = "True Believers — Recruit 50 followers",
+            Type        = ObjectiveType.RecruitN,
+            Target      = 50,
+            Reward      = 750f
+        });
+        _missions.Add(new Mission
+        {
+            Description = "War Chest — Accumulate $5,000",
+            Type        = ObjectiveType.EarnMoney,
+            Target      = 5000,
+            Reward      = 1000f
+        });
+        _missions.Add(new Mission
+        {
+            Description = "The Purge — Mug 20 people",
+            Type        = ObjectiveType.MugN,
+            Target      = 20,
+            Reward      = 500f
         });
     }
 
