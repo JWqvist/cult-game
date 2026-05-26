@@ -16,7 +16,10 @@ public partial class InnerCircle : Node
 
     // Timing
     private float _recruiterTimer = 0f;
-    private const float RecruiterInterval = 60f;
+    private float _recruiterInterval = 60f;  // overridable via SetRecruiterInterval
+
+    // Donation multiplier base (overridable via SetFinancierBonus)
+    private float _financierBonusBase = 1.5f;
 
     // Loyalty
     private const float LoyaltyDecayPerSec = 0.5f / 60f;
@@ -27,7 +30,7 @@ public partial class InnerCircle : Node
     public int RecruiterCount => InnerCircleMembers.FindAll(f => f.Role == FollowerRole.Recruiter).Count;
     public int EnforcerCount  => InnerCircleMembers.FindAll(f => f.Role == FollowerRole.Enforcer).Count;
     public int FinancierCount => InnerCircleMembers.FindAll(f => f.Role == FollowerRole.Financier).Count;
-    public float DonationMultiplier => Mathf.Pow(1.5f, FinancierCount);
+    public float DonationMultiplier => Mathf.Pow(_financierBonusBase, FinancierCount);
 
     // UI
     private CanvasLayer _canvas;
@@ -62,7 +65,7 @@ public partial class InnerCircle : Node
         if (RecruiterCount > 0)
         {
             _recruiterTimer += dt;
-            if (_recruiterTimer >= RecruiterInterval)
+            if (_recruiterTimer >= _recruiterInterval)
             {
                 _recruiterTimer = 0f;
                 GameManager.Instance.AddFollower();
@@ -125,6 +128,20 @@ public partial class InnerCircle : Node
         }
 
         AssignRole(f, next);
+    }
+
+    /// <summary>Set financier donation multiplier base (Scientology path: 2.5 = higher donations).</summary>
+    public void SetFinancierBonus(float bonusBase)
+    {
+        _financierBonusBase = Mathf.Max(1f, bonusBase);
+        GD.Print($"[InnerCircle] FinancierBonus base set to {_financierBonusBase:F2}");
+    }
+
+    /// <summary>Set recruiter auto-recruit interval in seconds (Heaven's Gate path: 30s = faster).</summary>
+    public void SetRecruiterInterval(float seconds)
+    {
+        _recruiterInterval = Mathf.Max(5f, seconds);
+        GD.Print($"[InnerCircle] RecruiterInterval set to {_recruiterInterval:F1}s");
     }
 
     // ── Private helpers ──────────────────────────────────────────────────────
