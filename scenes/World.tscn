@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://cult_world"]
+[gd_scene load_steps=4 format=3 uid="uid://cult_world"]
 
 [ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="1_player"]
+[ext_resource type="PackedScene" path="res://scenes/Vehicle.tscn" id="2_vehicle"]
 
 [sub_resource type="TileSet" id="TileSet_1"]
 tile_size = Vector2i(32, 32)
@@ -17,3 +18,18 @@ position = Vector2(640, 360)
 [node name="Camera2D" type="Camera2D" parent="Player"]
 position_smoothing_enabled = true
 position_smoothing_speed = 8.0
+
+[node name="Vehicle1" parent="." instance=ExtResource("2_vehicle")]
+position = Vector2(500, 280)
+
+[node name="Vehicle2" parent="." instance=ExtResource("2_vehicle")]
+position = Vector2(780, 260)
+rotation = 0.3
+
+[node name="Vehicle3" parent="." instance=ExtResource("2_vehicle")]
+position = Vector2(820, 450)
+rotation = -0.15
+
+[node name="Vehicle4" parent="." instance=ExtResource("2_vehicle")]
+position = Vector2(430, 480)
+rotation = 1.57
