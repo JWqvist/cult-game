@@ -8,6 +8,16 @@ public partial class Player : CharacterBody2D
     public float Health = 100f;
     public Inventory Inventory { get; private set; }
 
+    /// <summary>Called by NPCs, Police or other hazards to damage the player.</summary>
+    public void TakeDamage(float amount)
+    {
+        if (EndgameSystem.Instance?.IsOver == true) return;
+        Health = Mathf.Max(0f, Health - amount);
+        GD.Print($"[Player] TakeDamage {amount:F0}  HP left: {Health:F0}");
+        if (Health <= 0f)
+            EndgameSystem.Instance?.TriggerPlayerDead();
+    }
+
     private AnimationPlayer _animationPlayer;
     private Sprite2D _sprite;
     private string _lastDirection = "down";
