@@ -57,9 +57,14 @@ public partial class HeatSystem : Node
 
     public void AddHeat(float amount)
     {
+        int oldStars = WantedStars;
         HeatLevel = Mathf.Clamp(HeatLevel + amount, 0f, 5f);
         EmitSignal(SignalName.HeatChanged);
         GD.Print("[HeatSystem] Heat: ", HeatLevel.ToString("F2"), " Stars: ", WantedStars);
+
+        int newStars = WantedStars;
+        if (newStars > oldStars)
+            ToastManager.Show("Heat! " + new string('\u2605', newStars), ToastManager.ColorDanger);
     }
 
     /// <summary>Set a multiplier on passive heat decay (Waco path: 0.5 = slower decay = more aggressive police).</summary>

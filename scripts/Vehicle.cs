@@ -16,6 +16,11 @@ public partial class Vehicle : CharacterBody2D
     public override void _Ready()
     {
         AddToGroup("vehicles");
+        if (AssetManager.Instance != null)
+        {
+            GetNode<Sprite2D>("Sprite2D").Texture = AssetManager.Instance.GetCarTexture("red");
+            GetNode<Sprite2D>("Sprite2D").Modulate = Colors.White;
+        }
     }
 
     public void Enter()

@@ -12,6 +12,12 @@ public partial class TrafficCar : CharacterBody2D
     {
         AddToGroup("traffic");
 
+        if (AssetManager.Instance != null)
+        {
+            GetNode<Sprite2D>("Sprite2D").Texture = AssetManager.Instance.GetCarTexture("taxi");
+            GetNode<Sprite2D>("Sprite2D").Modulate = Colors.White;
+        }
+
         // If no waypoints set, park in place
         if (Waypoints == null || Waypoints.Length == 0)
         {

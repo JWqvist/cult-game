@@ -7,11 +7,16 @@
 [ext_resource type="PackedScene" path="res://scenes/HUD.tscn" id="5_hud"]
 [ext_resource type="PackedScene" path="res://scenes/ItemPickup.tscn" id="6_itempickup"]
 [ext_resource type="PackedScene" path="res://scenes/Compound.tscn" id="7_compound"]
+[ext_resource type="Script" path="res://scripts/WorldBackground.cs" id="8_wbg"]
 
 [sub_resource type="TileSet" id="TileSet_1"]
 tile_size = Vector2i(32, 32)
 
 [node name="World" type="Node2D"]
+
+[node name="WorldBackground" type="Node2D" parent="."]
+script = ExtResource("8_wbg")
+z_index = -10
 
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_1")
