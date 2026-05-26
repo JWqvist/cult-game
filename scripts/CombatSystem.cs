@@ -29,6 +29,12 @@ public partial class CombatSystem : Node
         }
     }
 
+    public override void _Process(double delta)
+    {
+        if (Input.IsActionJustPressed("melee_attack"))
+            DoMelee();
+    }
+
     private void DoMelee()
     {
         NPC nearest = null;
@@ -50,6 +56,8 @@ public partial class CombatSystem : Node
         if (nearest != null)
         {
             nearest.TakeDamage(MeleeDamage);
+            if (nearest is Pedestrian pedestrian)
+                pedestrian.OnAttacked();
             RaiseHeat();
             GD.Print("[Combat] Melee hit: ", nearest.Name, " remaining HP: ", nearest.Health);
         }
