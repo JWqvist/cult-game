@@ -1,0 +1,42 @@
+[gd_scene load_steps=6 format=3 uid="uid://cult_compound"]
+
+[ext_resource type="Script" path="res://scripts/Compound.cs" id="1_script"]
+
+[sub_resource type="RectangleShape2D" id="Shape_N"]
+size = Vector2(200, 8)
+
+[sub_resource type="RectangleShape2D" id="Shape_S"]
+size = Vector2(200, 8)
+
+[sub_resource type="RectangleShape2D" id="Shape_W"]
+size = Vector2(8, 150)
+
+[sub_resource type="RectangleShape2D" id="Shape_E"]
+size = Vector2(8, 150)
+
+[node name="Compound" type="StaticBody2D"]
+script = ExtResource("1_script")
+
+[node name="WallN" type="CollisionShape2D" parent="."]
+position = Vector2(0, -75)
+shape = SubResource("Shape_N")
+
+[node name="WallS" type="CollisionShape2D" parent="."]
+position = Vector2(0, 75)
+shape = SubResource("Shape_S")
+
+[node name="WallW" type="CollisionShape2D" parent="."]
+position = Vector2(-100, 0)
+shape = SubResource("Shape_W")
+
+[node name="WallE" type="CollisionShape2D" parent="."]
+position = Vector2(100, 0)
+shape = SubResource("Shape_E")
+
+[node name="fence" type="Node2D" parent="."]
+
+[node name="tent" type="Node2D" parent="."]
+visible = false
+
+[node name="building" type="Node2D" parent="."]
+visible = false

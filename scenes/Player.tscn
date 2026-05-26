@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://cult_player"]
+[gd_scene load_steps=8 format=3 uid="uid://cult_player"]
 
 [ext_resource type="Script" path="res://scripts/Player.cs" id="1_script"]
 [ext_resource type="Script" path="res://scripts/Inventory.cs" id="2_inventory"]
 [ext_resource type="Script" path="res://scripts/CombatSystem.cs" id="3_combat"]
+[ext_resource type="Script" path="res://scripts/RecruitSystem.cs" id="4_recruit"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
 size = Vector2(16, 20)
@@ -33,3 +34,6 @@ script = ExtResource("2_inventory")
 
 [node name="CombatSystem" type="Node" parent="."]
 script = ExtResource("3_combat")
+
+[node name="RecruitSystem" type="Node" parent="."]
+script = ExtResource("4_recruit")

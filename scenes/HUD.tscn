@@ -18,3 +18,6 @@ value = 100.0
 
 [node name="EquippedLabel" type="Label" parent="VBoxContainer"]
 text = "Equipped: Fists"
+
+[node name="CultStatsLabel" type="Label" parent="VBoxContainer"]
+text = "Followers: 1 | $0"
