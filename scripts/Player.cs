@@ -9,6 +9,8 @@ public partial class Player : CharacterBody2D
     private Sprite2D _sprite;
     private string _lastDirection = "down";
 
+    private Vehicle _currentVehicle = null;
+
     public override void _Ready()
     {
         _animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
@@ -17,6 +19,24 @@ public partial class Player : CharacterBody2D
 
     public override void _PhysicsProcess(double delta)
     {
+        // Handle carjack enter / exit
+        if (Input.IsActionJustPressed("interact"))
+        {
+            if (_currentVehicle != null)
+                ExitVehicle();
+            else
+                TryEnterVehicle();
+        }
+
+        // While driving: follow the vehicle position so the Camera2D tracks it
+        if (_currentVehicle != null)
+        {
+            GlobalPosition = _currentVehicle.GlobalPosition;
+            Velocity = Vector2.Zero;
+            return;
+        }
+
+        // Normal on-foot movement
         Vector2 inputDir = Vector2.Zero;
 
         if (Input.IsActionPressed("move_up")) inputDir.Y -= 1;
@@ -40,6 +60,44 @@ public partial class Player : CharacterBody2D
         }
 
         MoveAndSlide();
+    }
+
+    private void TryEnterVehicle()
+    {
+        Godot.Collections.Array<Node> vehicles = GetTree().GetNodesInGroup("vehicles");
+        Vehicle nearest = null;
+        float nearestDist = float.MaxValue;
+
+        foreach (Node node in vehicles)
+        {
+            if (node is Vehicle vehicle && !vehicle.IsOccupied)
+            {
+                float dist = GlobalPosition.DistanceTo(vehicle.GlobalPosition);
+                if (dist < vehicle.InteractRange && dist < nearestDist)
+                {
+                    nearest = vehicle;
+                    nearestDist = dist;
+                }
+            }
+        }
+
+        if (nearest != null)
+            EnterVehicle(nearest);
+    }
+
+    private void EnterVehicle(Vehicle vehicle)
+    {
+        _currentVehicle = vehicle;
+        _currentVehicle.Enter();
+        Visible = false;
+    }
+
+    private void ExitVehicle()
+    {
+        GlobalPosition = _currentVehicle.GetExitPosition();
+        _currentVehicle.Exit();
+        _currentVehicle = null;
+        Visible = true;
     }
 
     private void UpdateDirectionAndAnimation(Vector2 dir, bool running)
