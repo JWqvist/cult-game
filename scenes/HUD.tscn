@@ -21,3 +21,7 @@ text = "Equipped: Fists"
 
 [node name="CultStatsLabel" type="Label" parent="VBoxContainer"]
 text = "Followers: 1 | $0"
+
+[node name="WantedLabel" type="Label" parent="VBoxContainer"]
+text = ""
+visible = false

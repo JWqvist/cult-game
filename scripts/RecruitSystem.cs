@@ -1,16 +1,21 @@
 using Godot;
 
 /// <summary>
-/// Handles NPC recruitment. Attach as child Node of Player.
-/// Press interact (E) near a Pedestrian to show "Join us? [Y/N]".
-/// Roll < 0.4 succeeds: pedestrian enters FOLLOWING state, CultSize++.
+/// Handles NPC recruitment and mugging. Attach as child Node of Player.
+/// Press interact (E) near a Pedestrian to show options.
+/// Non-recruited: "Recruit [Y] | Mug [M] | Cancel [N]".
+/// Mugging steals $10-30 and adds 0.5 heat.
 /// </summary>
 public partial class RecruitSystem : Node
 {
     private const float InteractRange = 80f;
+    private const float MugMinMoney = 10f;
+    private const float MugMaxMoney = 30f;
+    private const float MugHeat = 0.5f;
 
     private Label _dialogueLabel;
     private bool _dialogueActive = false;
+    private bool _targetIsRecruited = false;
     private Pedestrian _targetPedestrian = null;
     private Node2D _player = null;
 
@@ -21,14 +26,14 @@ public partial class RecruitSystem : Node
         AddChild(canvas);
 
         _dialogueLabel = new Label();
-        _dialogueLabel.Text = "Join us? [Y/N]";
+        _dialogueLabel.Text = "Recruit [Y] | Mug [M] | Cancel [N]";
         _dialogueLabel.Visible = false;
         _dialogueLabel.AnchorLeft = 0.5f;
         _dialogueLabel.AnchorRight = 0.5f;
         _dialogueLabel.AnchorTop = 0.5f;
         _dialogueLabel.AnchorBottom = 0.5f;
-        _dialogueLabel.OffsetLeft = -80f;
-        _dialogueLabel.OffsetRight = 80f;
+        _dialogueLabel.OffsetLeft = -120f;
+        _dialogueLabel.OffsetRight = 120f;
         _dialogueLabel.OffsetTop = -16f;
         _dialogueLabel.OffsetBottom = 16f;
         canvas.AddChild(_dialogueLabel);
@@ -56,6 +61,11 @@ public partial class RecruitSystem : Node
             if (key.Keycode == Key.Y)
             {
                 AttemptRecruit();
+                GetViewport().SetInputAsHandled();
+            }
+            else if (key.Keycode == Key.M && !_targetIsRecruited)
+            {
+                AttemptMug();
                 GetViewport().SetInputAsHandled();
             }
             else if (key.Keycode == Key.N)
@@ -89,6 +99,10 @@ public partial class RecruitSystem : Node
         if (nearest != null)
         {
             _targetPedestrian = nearest;
+            _targetIsRecruited = nearest.IsRecruited;
+            _dialogueLabel.Text = _targetIsRecruited
+                ? "Already a follower."
+                : "Recruit [Y] | Mug [M] | Cancel [N]";
             _dialogueLabel.Visible = true;
             _dialogueActive = true;
         }
@@ -99,6 +113,11 @@ public partial class RecruitSystem : Node
         HideDialogue();
 
         if (_targetPedestrian == null || !IsInstanceValid(_targetPedestrian)) return;
+        if (_targetIsRecruited)
+        {
+            _targetPedestrian = null;
+            return;
+        }
 
         bool success = GD.Randf() < 0.4f;
         if (success)
@@ -111,6 +130,20 @@ public partial class RecruitSystem : Node
         {
             GD.Print("[RecruitSystem] Recruitment failed.");
         }
+
+        _targetPedestrian = null;
+    }
+
+    private void AttemptMug()
+    {
+        HideDialogue();
+
+        if (_targetPedestrian == null || !IsInstanceValid(_targetPedestrian)) return;
+
+        float stolen = MugMinMoney + GD.Randf() * (MugMaxMoney - MugMinMoney);
+        GameManager.Instance.AddMoney(stolen);
+        HeatSystem.Instance?.AddHeat(MugHeat);
+        GD.Print("[RecruitSystem] Mugged for $", stolen.ToString("F0"));
 
         _targetPedestrian = null;
     }
