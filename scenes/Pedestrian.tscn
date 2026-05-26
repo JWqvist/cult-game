@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://cult_pedestrian"]
+
+[ext_resource type="Script" path="res://scripts/Pedestrian.cs" id="1_script"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1"]
+radius = 7.0
+height = 18.0
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_1"]
+size = Vector2(14, 20)
+
+[node name="Pedestrian" type="CharacterBody2D"]
+script = ExtResource("1_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_1")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = SubResource("PlaceholderTexture2D_1")
+modulate = Color(0.2, 0.8, 0.3, 1)

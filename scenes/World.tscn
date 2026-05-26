@@ -1,7 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://cult_world"]
+[gd_scene load_steps=6 format=3 uid="uid://cult_world"]
 
 [ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/Vehicle.tscn" id="2_vehicle"]
+[ext_resource type="PackedScene" path="res://scenes/Pedestrian.tscn" id="3_pedestrian"]
+[ext_resource type="PackedScene" path="res://scenes/TrafficCar.tscn" id="4_trafficcar"]
 
 [sub_resource type="TileSet" id="TileSet_1"]
 tile_size = Vector2i(32, 32)
@@ -33,3 +35,30 @@ rotation = -0.15
 [node name="Vehicle4" parent="." instance=ExtResource("2_vehicle")]
 position = Vector2(430, 480)
 rotation = 1.57
+
+[node name="Pedestrian1" parent="." instance=ExtResource("3_pedestrian")]
+position = Vector2(300, 200)
+
+[node name="Pedestrian2" parent="." instance=ExtResource("3_pedestrian")]
+position = Vector2(-200, 400)
+
+[node name="Pedestrian3" parent="." instance=ExtResource("3_pedestrian")]
+position = Vector2(900, 150)
+
+[node name="Pedestrian4" parent="." instance=ExtResource("3_pedestrian")]
+position = Vector2(-400, -300)
+
+[node name="Pedestrian5" parent="." instance=ExtResource("3_pedestrian")]
+position = Vector2(600, 700)
+
+[node name="TrafficCar1" parent="." instance=ExtResource("4_trafficcar")]
+position = Vector2(0, -400)
+Waypoints = PackedVector2Array(-400, -400, 400, -400, 400, 400, -400, 400)
+
+[node name="TrafficCar2" parent="." instance=ExtResource("4_trafficcar")]
+position = Vector2(600, -600)
+Waypoints = PackedVector2Array(-600, -600, 600, -600, 600, 600, -600, 600)
+
+[node name="TrafficCar3" parent="." instance=ExtResource("4_trafficcar")]
+position = Vector2(-200, 600)
+Waypoints = PackedVector2Array(-200, -700, 700, -200, 200, 700, -700, 200)
