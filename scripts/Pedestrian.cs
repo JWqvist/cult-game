@@ -2,7 +2,7 @@ using Godot;
 
 public partial class Pedestrian : NPC
 {
-    private enum State { IDLE, WALKING, FLEEING }
+    private enum State { IDLE, WALKING, FLEEING, FOLLOWING }
 
     private const float WalkSpeed = 60f;
     private const float FleeSpeed = 120f;
@@ -16,6 +16,7 @@ public partial class Pedestrian : NPC
     private Vector2 _targetPosition;
     private float _idleTimer = 0f;
     private Node2D _player;
+    private Vector2 _followOffset;
 
     public override void _Ready()
     {
@@ -23,6 +24,13 @@ public partial class Pedestrian : NPC
         AddToGroup("pedestrians");
         _targetPosition = GlobalPosition;
         _idleTimer = GD.Randf() * IdleTime; // stagger start times
+    }
+
+    public void StartFollowing()
+    {
+        _state = State.FOLLOWING;
+        float angle = GD.Randf() * Mathf.Tau;
+        _followOffset = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * (30f + GD.Randf() * 40f);
     }
 
     public override void _PhysicsProcess(double delta)
@@ -39,8 +47,8 @@ public partial class Pedestrian : NPC
 
         float distToPlayer = _player != null ? GlobalPosition.DistanceTo(_player.GlobalPosition) : float.MaxValue;
 
-        // State transitions
-        if (_state != State.FLEEING && distToPlayer < FleeRadius)
+        // State transitions (FOLLOWING overrides flee/wander)
+        if (_state != State.FLEEING && _state != State.FOLLOWING && distToPlayer < FleeRadius)
         {
             _state = State.FLEEING;
         }
@@ -82,6 +90,18 @@ public partial class Pedestrian : NPC
                 {
                     Vector2 awayFromPlayer = (GlobalPosition - _player.GlobalPosition).Normalized();
                     Velocity = awayFromPlayer * FleeSpeed;
+                }
+                break;
+
+            case State.FOLLOWING:
+                if (_player != null)
+                {
+                    Vector2 followTarget = _player.GlobalPosition + _followOffset;
+                    Vector2 toFollow = followTarget - GlobalPosition;
+                    if (toFollow.Length() > ArrivalThreshold)
+                        Velocity = toFollow.Normalized() * WalkSpeed;
+                    else
+                        Velocity = Vector2.Zero;
                 }
                 break;
         }

@@ -9,9 +9,12 @@ public partial class GameManager : Node
     public static GameManager Instance { get; private set; }
 
     // Player stats
-    public int Money { get; private set; } = 0;
+    public float Money { get; private set; } = 0f;
     public int CultSize { get; private set; } = 1;  // starts with the player
     public int HeatLevel { get; private set; } = 0; // 0-5, police attention
+
+    // Donations: $5 per follower per second (simplified day cycle)
+    public float DonationsPerDay => CultSize * 5.0f;
 
     [Signal]
     public delegate void StatsChangedEventHandler();
@@ -22,15 +25,22 @@ public partial class GameManager : Node
         GD.Print("[GameManager] Initialized. Money=", Money, " CultSize=", CultSize, " Heat=", HeatLevel);
     }
 
-    public void AddMoney(int amount)
+    public override void _Process(double delta)
+    {
+        // Followers donate $5/follower/second (simplified)
+        Money += CultSize * 5.0f * (float)delta;
+        EmitSignal(SignalName.StatsChanged);
+    }
+
+    public void AddMoney(float amount)
     {
         Money += amount;
         EmitSignal(SignalName.StatsChanged);
     }
 
-    public void SpendMoney(int amount)
+    public void SpendMoney(float amount)
     {
-        Money = Mathf.Max(0, Money - amount);
+        Money = Mathf.Max(0f, Money - amount);
         EmitSignal(SignalName.StatsChanged);
     }
 
