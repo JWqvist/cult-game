@@ -30,6 +30,28 @@ public partial class WorldBackground : Node2D
     public override void _Ready()
     {
         ZIndex = -10;
+
+        // Place Kenney road intersection sprites at each grid intersection
+        var roadTex = GD.Load<Texture2D>("res://assets/kenney/road-textures/Legacy/PNG/roadTile7.png");
+        if (roadTex != null)
+        {
+            for (int xi = -7; xi <= 7; xi++)
+            {
+                for (int yi = -7; yi <= 7; yi++)
+                {
+                    var sp = new Sprite2D();
+                    sp.Texture = roadTex;
+                    sp.Position = new Vector2(xi * GridSize, yi * GridSize);
+                    sp.Scale = new Vector2(3f, 3f);
+                    sp.ZIndex = -9; // just above the _Draw() layer
+                    AddChild(sp);
+                }
+            }
+        }
+        else
+        {
+            GD.PrintErr("[WorldBackground] Could not load roadTile7.png");
+        }
     }
 
     public override void _Draw()
