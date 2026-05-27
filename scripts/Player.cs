@@ -76,6 +76,8 @@ public partial class Player : CharacterBody2D
             inputDir = inputDir.Normalized();
             Velocity = inputDir * speed;
             UpdateDirectionAndAnimation(inputDir, running);
+            if (_sprite != null)
+                _sprite.Rotation = Mathf.Atan2(inputDir.Y, inputDir.X) + Mathf.Pi / 2f;
         }
         else
         {
@@ -127,47 +129,19 @@ public partial class Player : CharacterBody2D
     private void UpdateDirectionAndAnimation(Vector2 dir, bool running)
     {
         string animPrefix = running ? "run" : "walk";
-        string newDir = _lastDirection;
+        string newDir;
 
         if (Mathf.Abs(dir.X) > Mathf.Abs(dir.Y))
         {
-            if (dir.X > 0)
-            {
-                newDir = "right";
-                _sprite.FlipH = true;
-                PlayAnimation(animPrefix + "_right");
-            }
-            else
-            {
-                newDir = "left";
-                _sprite.FlipH = false;
-                PlayAnimation(animPrefix + "_left");
-            }
+            newDir = dir.X > 0 ? "right" : "left";
         }
         else
         {
-            _sprite.FlipH = false;
-            if (dir.Y < 0)
-            {
-                newDir = "up";
-                PlayAnimation(animPrefix + "_up");
-            }
-            else
-            {
-                newDir = "down";
-                PlayAnimation(animPrefix + "_down");
-            }
+            newDir = dir.Y < 0 ? "up" : "down";
         }
 
-        if (newDir != _lastDirection && AssetManager.Instance != null)
-        {
-            _lastDirection = newDir;
-            _sprite.Texture = AssetManager.Instance.GetPlayerTexture(newDir);
-        }
-        else
-        {
-            _lastDirection = newDir;
-        }
+        PlayAnimation(animPrefix + "_" + newDir);
+        _lastDirection = newDir;
     }
 
     private void PlayAnimation(string animName)
