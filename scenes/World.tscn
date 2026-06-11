@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://cult_world"]
+[gd_scene load_steps=10 format=3 uid="uid://cult_world"]
 
 [ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/Vehicle.tscn" id="2_vehicle"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ItemPickup.tscn" id="6_itempickup"]
 [ext_resource type="PackedScene" path="res://scenes/Compound.tscn" id="7_compound"]
 [ext_resource type="Script" path="res://scripts/WorldBackground.cs" id="8_wbg"]
+[ext_resource type="PackedScene" path="res://scenes/NPC.tscn" id="9_npc"]
 
 [sub_resource type="TileSet" id="TileSet_1"]
 tile_size = Vector2i(32, 32)
@@ -88,3 +89,27 @@ item_type = "Gun"
 
 [node name="Compound" parent="." instance=ExtResource("7_compound")]
 position = Vector2(800, 800)
+
+[node name="NPC1" parent="." instance=ExtResource("9_npc")]
+position = Vector2(200, 100)
+
+[node name="NPC2" parent="." instance=ExtResource("9_npc")]
+position = Vector2(-100, 300)
+
+[node name="NPC3" parent="." instance=ExtResource("9_npc")]
+position = Vector2(750, 400)
+
+[node name="NPC4" parent="." instance=ExtResource("9_npc")]
+position = Vector2(-300, -200)
+
+[node name="NPC5" parent="." instance=ExtResource("9_npc")]
+position = Vector2(400, -150)
+
+[node name="NPC6" parent="." instance=ExtResource("9_npc")]
+position = Vector2(100, 600)
+
+[node name="NPC7" parent="." instance=ExtResource("9_npc")]
+position = Vector2(-500, 100)
+
+[node name="NPC8" parent="." instance=ExtResource("9_npc")]
+position = Vector2(950, -100)
