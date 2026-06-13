@@ -29,11 +29,7 @@ public partial class CombatSystem : Node
         }
     }
 
-    public override void _Process(double delta)
-    {
-        if (Input.IsActionJustPressed("melee_attack"))
-            DoMelee();
-    }
+
 
     private void DoMelee()
     {
@@ -42,7 +38,7 @@ public partial class CombatSystem : Node
 
         foreach (Node node in GetTree().GetNodesInGroup("npcs"))
         {
-            if (node is NPC npc && IsInstanceValid(npc))
+            if (node is NPC npc && IsInstanceValid(npc) && !npc.IsDead)
             {
                 float dist = _player.GlobalPosition.DistanceTo(npc.GlobalPosition);
                 if (dist < MeleeRange && dist < nearestDist)
@@ -80,7 +76,7 @@ public partial class CombatSystem : Node
         if (result.Count > 0)
         {
             GodotObject collider = result["collider"].AsGodotObject();
-            if (collider is NPC hitNpc && IsInstanceValid(hitNpc))
+            if (collider is NPC hitNpc && IsInstanceValid(hitNpc) && !hitNpc.IsDead)
             {
                 hitNpc.TakeDamage(RangedDamage);
                 RaiseHeat();

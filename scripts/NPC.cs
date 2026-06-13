@@ -39,15 +39,55 @@ public partial class NPC : CharacterBody2D
             _sprite.Modulate = NormalColor;
     }
 
+    public bool IsDead { get; private set; } = false;
+
+    /// <summary>Item type this NPC drops on death (empty = no drop).</summary>
+    [Export] public string DropItem { get; set; } = "";
+
     public virtual void TakeDamage(float amount)
     {
+        if (IsDead) return;
         Health -= amount;
         if (Health <= 0f)
-            QueueFree();
+            Die();
+    }
+
+    private void Die()
+    {
+        IsDead = true;
+        Velocity = Vector2.Zero;
+
+        // Visual death state: grey out + rotate
+        if (_sprite != null)
+        {
+            _sprite.Modulate = new Color(0.4f, 0.4f, 0.4f, 0.7f);
+            _sprite.Rotation = Mathf.DegToRad(90f);
+        }
+
+        // Drop item pickup
+        if (!string.IsNullOrEmpty(DropItem))
+        {
+            var pickupScene = GD.Load<PackedScene>("res://scenes/ItemPickup.tscn");
+            if (pickupScene != null)
+            {
+                var pickup = pickupScene.Instantiate<ItemPickup>();
+                pickup.ItemType = DropItem;
+                pickup.GlobalPosition = GlobalPosition;
+                GetParent().AddChild(pickup);
+            }
+        }
+
+        // Remove from npcs group so combat doesn't target corpse
+        RemoveFromGroup("npcs");
+
+        // Disappear after a delay
+        var timer = GetTree().CreateTimer(5.0);
+        timer.Timeout += QueueFree;
     }
 
     public override void _PhysicsProcess(double delta)
     {
+        if (IsDead) return;
         float dt = (float)delta;
 
         if (_player == null)
