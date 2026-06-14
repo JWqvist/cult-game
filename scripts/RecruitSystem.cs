@@ -1,10 +1,12 @@
 using Godot;
 
 /// <summary>
-/// Handles NPC recruitment and mugging. Attach as child Node of Player.
+/// Handles NPC recruitment and crimes. Attach as child Node of Player.
 /// Press interact (E) near a Pedestrian to show options.
-/// Non-recruited: "Recruit [Y] | Mug [M] | Cancel [N]".
-/// Mugging steals $10-30 and adds 0.5 heat.
+/// Non-recruited: "Recruit [Y] | Mug [M] | Theft [T] | Scam [S] | Cancel [N]".
+/// Mug:   $10-30,  heat +0.5
+/// Theft: $30-60,  heat +1.0  (pickpocket)
+/// Scam:  $5-15,   heat +0.1  (low risk, low reward)
 /// </summary>
 public partial class RecruitSystem : Node
 {
@@ -12,6 +14,12 @@ public partial class RecruitSystem : Node
     private const float MugMinMoney = 10f;
     private const float MugMaxMoney = 30f;
     private const float MugHeat = 0.5f;
+    private const float TheftMinMoney = 30f;
+    private const float TheftMaxMoney = 60f;
+    private const float TheftHeat = 1.0f;
+    private const float ScamMinMoney = 5f;
+    private const float ScamMaxMoney = 15f;
+    private const float ScamHeat = 0.1f;
 
     private static readonly Color Gold   = new Color(1.00f, 0.84f, 0.00f);
     private static readonly Color DarkBg = new Color(0.00f, 0.00f, 0.00f, 0.80f);
@@ -64,7 +72,7 @@ public partial class RecruitSystem : Node
         vbox.AddChild(_npcNameLabel);
 
         _optionsLabel = new Label();
-        _optionsLabel.Text = "[Y] Recruit    [M] Mug    [N] Cancel";
+        _optionsLabel.Text = "[Y] Recruit  [M] Mug  [T] Theft  [S] Scam  [N] Cancel";
         _optionsLabel.HorizontalAlignment = HorizontalAlignment.Center;
         _optionsLabel.AddThemeColorOverride("font_color", new Color(0.88f, 0.88f, 0.88f));
         _optionsLabel.AddThemeFontSizeOverride("font_size", 12);
@@ -102,6 +110,16 @@ public partial class RecruitSystem : Node
             else if (key.Keycode == Key.M && !_targetIsRecruited)
             {
                 AttemptMug();
+                GetViewport().SetInputAsHandled();
+            }
+            else if (key.Keycode == Key.T && !_targetIsRecruited)
+            {
+                AttemptTheft();
+                GetViewport().SetInputAsHandled();
+            }
+            else if (key.Keycode == Key.S && !_targetIsRecruited)
+            {
+                AttemptScam();
                 GetViewport().SetInputAsHandled();
             }
             else if (key.Keycode == Key.N)
@@ -142,7 +160,7 @@ public partial class RecruitSystem : Node
 
             _optionsLabel.Text = _targetIsRecruited
                 ? "Already a follower."
-                : "[Y] Recruit    [M] Mug    [N] Cancel";
+                : "[Y] Recruit  [M] Mug  [T] Theft  [S] Scam  [N] Cancel";
 
             _dialoguePanel.Visible = true;
             _dialogueActive = true;
@@ -187,8 +205,38 @@ public partial class RecruitSystem : Node
         float stolen = MugMinMoney + GD.Randf() * (MugMaxMoney - MugMinMoney);
         GameManager.Instance.AddMoney(stolen);
         HeatSystem.Instance?.AddHeat(MugHeat);
-        ToastManager.Show("+$" + (int)stolen, ToastManager.ColorMoney);
+        ToastManager.Show("Mugged! +$" + (int)stolen, ToastManager.ColorMoney);
         GD.Print("[RecruitSystem] Mugged for $", stolen.ToString("F0"));
+
+        _targetPedestrian = null;
+    }
+
+    private void AttemptTheft()
+    {
+        HideDialogue();
+
+        if (_targetPedestrian == null || !IsInstanceValid(_targetPedestrian)) return;
+
+        float stolen = TheftMinMoney + GD.Randf() * (TheftMaxMoney - TheftMinMoney);
+        GameManager.Instance.AddMoney(stolen);
+        HeatSystem.Instance?.AddHeat(TheftHeat);
+        ToastManager.Show("Theft! +$" + (int)stolen, ToastManager.ColorMoney);
+        GD.Print("[RecruitSystem] Theft for $", stolen.ToString("F0"));
+
+        _targetPedestrian = null;
+    }
+
+    private void AttemptScam()
+    {
+        HideDialogue();
+
+        if (_targetPedestrian == null || !IsInstanceValid(_targetPedestrian)) return;
+
+        float earned = ScamMinMoney + GD.Randf() * (ScamMaxMoney - ScamMinMoney);
+        GameManager.Instance.AddMoney(earned);
+        HeatSystem.Instance?.AddHeat(ScamHeat);
+        ToastManager.Show("Scam! +$" + (int)earned, ToastManager.ColorMoney);
+        GD.Print("[RecruitSystem] Scam for $", earned.ToString("F0"));
 
         _targetPedestrian = null;
     }
