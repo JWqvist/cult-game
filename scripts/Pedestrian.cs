@@ -4,15 +4,15 @@ public partial class Pedestrian : NPC
 {
     private enum State { IDLE, WALKING, FLEEING, FOLLOWING }
 
-    private const float WalkSpeed = 60f;
-    private const float FleeSpeed = 120f;
-    private const float FleeRadius = 200f;
-    private const float StopFleeRadius = 300f;
+    private const float PedWalkSpeed = 60f;
+    private const float PedFleeSpeed = 120f;
+    private const float PedFleeRadius = 200f;
+    private const float PedStopFleeRadius = 300f;
     private const float WanderRadius = 300f;
     private const float IdleTime = 2f;
     private const float ArrivalThreshold = 10f;
 
-    public bool IsRecruited { get; private set; } = false;
+    public new bool IsRecruited { get; private set; } = false;
 
     private State _state = State.IDLE;
     private Vector2 _targetPosition;
@@ -67,7 +67,7 @@ public partial class Pedestrian : NPC
         float distToPlayer = _player != null ? GlobalPosition.DistanceTo(_player.GlobalPosition) : float.MaxValue;
 
         // State transitions
-        if (_state == State.FLEEING && distToPlayer > StopFleeRadius)
+        if (_state == State.FLEEING && distToPlayer > PedStopFleeRadius)
         {
             _state = State.IDLE;
             _idleTimer = IdleTime;
@@ -96,7 +96,7 @@ public partial class Pedestrian : NPC
                 }
                 else
                 {
-                    Velocity = toTarget.Normalized() * WalkSpeed;
+                    Velocity = toTarget.Normalized() * PedWalkSpeed;
                 }
                 break;
 
@@ -104,7 +104,7 @@ public partial class Pedestrian : NPC
                 if (_player != null)
                 {
                     Vector2 awayFromPlayer = (GlobalPosition - _player.GlobalPosition).Normalized();
-                    Velocity = awayFromPlayer * FleeSpeed;
+                    Velocity = awayFromPlayer * PedFleeSpeed;
                 }
                 break;
 
@@ -114,7 +114,7 @@ public partial class Pedestrian : NPC
                     Vector2 followTarget = _player.GlobalPosition + _followOffset;
                     Vector2 toFollow = followTarget - GlobalPosition;
                     if (toFollow.Length() > ArrivalThreshold)
-                        Velocity = toFollow.Normalized() * WalkSpeed;
+                        Velocity = toFollow.Normalized() * PedWalkSpeed;
                     else
                         Velocity = Vector2.Zero;
                 }
