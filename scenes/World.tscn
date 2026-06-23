@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://cult_world"]
+[gd_scene load_steps=12 format=3 uid="uid://cult_world"]
 
 [ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/Vehicle.tscn" id="2_vehicle"]
@@ -9,6 +9,8 @@
 [ext_resource type="PackedScene" path="res://scenes/Compound.tscn" id="7_compound"]
 [ext_resource type="Script" path="res://scripts/WorldBackground.cs" id="8_wbg"]
 [ext_resource type="PackedScene" path="res://scenes/NPC.tscn" id="9_npc"]
+[ext_resource type="Script" path="res://scripts/WorldGenerator.cs" id="10_worldgen"]
+[ext_resource type="Script" path="res://scripts/Minimap.cs" id="11_minimap"]
 
 [sub_resource type="TileSet" id="TileSet_1"]
 tile_size = Vector2i(32, 32)
@@ -113,3 +115,12 @@ position = Vector2(-500, 100)
 
 [node name="NPC8" parent="." instance=ExtResource("9_npc")]
 position = Vector2(950, -100)
+
+[node name="WorldGenerator" type="Node" parent="."]
+script = ExtResource("10_worldgen")
+
+[node name="MinimapLayer" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="Minimap" type="Control" parent="MinimapLayer"]
+script = ExtResource("11_minimap")
