@@ -50,6 +50,11 @@ public partial class Player : CharacterBody2D
             else if (!TryRecruitNPC())
                 TryEnterVehicle();
         }
+        // Also allow F (melee_attack) to exit vehicle for convenience
+        else if (_currentVehicle != null && Input.IsActionJustPressed("melee_attack"))
+        {
+            ExitVehicle();
+        }
     }
 
     public override void _PhysicsProcess(double delta)
@@ -133,6 +138,7 @@ public partial class Player : CharacterBody2D
         _currentVehicle = vehicle;
         _currentVehicle.Enter();
         Visible = false;
+        ToastManager.Show("Carjacked! WASD to drive, E/F to exit.", Colors.White);
     }
 
     private void ExitVehicle()
@@ -141,6 +147,7 @@ public partial class Player : CharacterBody2D
         _currentVehicle.Exit();
         _currentVehicle = null;
         Visible = true;
+        ToastManager.Show("Exited vehicle.", Colors.White);
     }
 
     private void UpdateDirectionAndAnimation(Vector2 dir, bool running)
