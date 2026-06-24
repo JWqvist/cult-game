@@ -31,6 +31,8 @@ public partial class CombatSystem : Node
 
 
 
+    private const float FleeAlertRadius = 250f;
+
     private void DoMelee()
     {
         NPC nearest = null;
@@ -52,9 +54,8 @@ public partial class CombatSystem : Node
         if (nearest != null)
         {
             nearest.TakeDamage(MeleeDamage);
-            if (nearest is Pedestrian pedestrian)
-                pedestrian.OnAttacked();
             RaiseHeat();
+            AlertNearbyPedestrians(_player.GlobalPosition);
             GD.Print("[Combat] Melee hit: ", nearest.Name, " remaining HP: ", nearest.Health);
         }
     }
@@ -80,7 +81,20 @@ public partial class CombatSystem : Node
             {
                 hitNpc.TakeDamage(RangedDamage);
                 RaiseHeat();
+                AlertNearbyPedestrians(_player.GlobalPosition);
                 GD.Print("[Combat] Ranged hit: ", hitNpc.Name);
+            }
+        }
+    }
+
+    private void AlertNearbyPedestrians(Vector2 origin)
+    {
+        foreach (Node node in GetTree().GetNodesInGroup("pedestrians"))
+        {
+            if (node is Pedestrian ped && IsInstanceValid(ped))
+            {
+                if (origin.DistanceTo(ped.GlobalPosition) < FleeAlertRadius)
+                    ped.OnAttacked();
             }
         }
     }
