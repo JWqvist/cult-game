@@ -63,6 +63,15 @@ position = Vector2(-400, -300)
 [node name="Pedestrian5" parent="." instance=ExtResource("3_pedestrian")]
 position = Vector2(600, 700)
 
+[node name="Pedestrian6" parent="." instance=ExtResource("3_pedestrian")]
+position = Vector2(-100, -500)
+
+[node name="Pedestrian7" parent="." instance=ExtResource("3_pedestrian")]
+position = Vector2(1000, 300)
+
+[node name="Pedestrian8" parent="." instance=ExtResource("3_pedestrian")]
+position = Vector2(350, -250)
+
 [node name="TrafficCar1" parent="." instance=ExtResource("4_trafficcar")]
 position = Vector2(0, -400)
 Waypoints = PackedVector2Array(-400, -400, 400, -400, 400, 400, -400, 400)
@@ -74,6 +83,16 @@ Waypoints = PackedVector2Array(-600, -600, 600, -600, 600, 600, -600, 600)
 [node name="TrafficCar3" parent="." instance=ExtResource("4_trafficcar")]
 position = Vector2(-200, 600)
 Waypoints = PackedVector2Array(-200, -700, 700, -200, 200, 700, -700, 200)
+
+[node name="TrafficCar4" parent="." instance=ExtResource("4_trafficcar")]
+position = Vector2(300, 0)
+Speed = 60.0
+Waypoints = PackedVector2Array(300, -500, 300, 500)
+
+[node name="TrafficCar5" parent="." instance=ExtResource("4_trafficcar")]
+position = Vector2(-500, 200)
+Speed = 70.0
+Waypoints = PackedVector2Array(-800, 200, 800, 200)
 
 [node name="HUD" parent="." instance=ExtResource("5_hud")]
 
