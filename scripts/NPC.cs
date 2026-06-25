@@ -48,8 +48,19 @@ public partial class NPC : CharacterBody2D
     {
         if (IsDead) return;
         Health -= amount;
+        FlashHit();
         if (Health <= 0f)
             Die();
+    }
+
+    /// <summary>Brief red tint to make a non-lethal hit visible (no animation assets needed).</summary>
+    private void FlashHit()
+    {
+        if (_sprite == null || !IsInstanceValid(_sprite)) return;
+        Color baseColor = _recruited ? RecruitedColor : NormalColor;
+        _sprite.Modulate = new Color(1f, 0.4f, 0.4f, 1f);
+        var tween = CreateTween();
+        tween.TweenProperty(_sprite, "modulate", baseColor, 0.18f);
     }
 
     private void Die()
@@ -57,12 +68,22 @@ public partial class NPC : CharacterBody2D
         IsDead = true;
         Velocity = Vector2.Zero;
 
-        // Visual death state: grey out + rotate
-        if (_sprite != null)
+        // Visual death state (ragdoll-lite): grey out, fall over, shrink slightly.
+        if (_sprite != null && IsInstanceValid(_sprite))
         {
-            _sprite.Modulate = new Color(0.4f, 0.4f, 0.4f, 0.7f);
-            _sprite.Rotation = Mathf.DegToRad(90f);
+            var tween = CreateTween();
+            tween.SetParallel(true);
+            tween.TweenProperty(_sprite, "modulate", new Color(0.4f, 0.4f, 0.4f, 0.7f), 0.25f);
+            tween.TweenProperty(_sprite, "rotation", Mathf.DegToRad(90f), 0.25f);
+            tween.TweenProperty(_sprite, "scale", new Vector2(0.9f, 0.9f), 0.25f);
         }
+
+        // Disable collision so the corpse doesn't block movement or future raycasts.
+        var col = GetNodeOrNull<CollisionShape2D>("CollisionShape2D");
+        if (col != null)
+            col.SetDeferred(CollisionShape2D.PropertyName.Disabled, true);
+
+        GD.Print("[NPC] ", Name, " died.");
 
         // Drop item pickup
         if (!string.IsNullOrEmpty(DropItem))

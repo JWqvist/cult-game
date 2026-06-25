@@ -113,12 +113,15 @@ position = Vector2(800, 800)
 
 [node name="NPC1" parent="." instance=ExtResource("9_npc")]
 position = Vector2(200, 100)
+DropItem = "Gun"
 
 [node name="NPC2" parent="." instance=ExtResource("9_npc")]
 position = Vector2(-100, 300)
+DropItem = "MeleeWeapon"
 
 [node name="NPC3" parent="." instance=ExtResource("9_npc")]
 position = Vector2(750, 400)
+DropItem = "Gun"
 
 [node name="NPC4" parent="." instance=ExtResource("9_npc")]
 position = Vector2(-300, -200)

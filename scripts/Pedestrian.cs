@@ -54,6 +54,14 @@ public partial class Pedestrian : NPC
 
     public override void _PhysicsProcess(double delta)
     {
+        // Dead pedestrians disable their AI (ragdoll-lite). Base NPC.Die()
+        // handles the death visuals, item drop and cleanup timer.
+        if (IsDead)
+        {
+            Velocity = Vector2.Zero;
+            return;
+        }
+
         float dt = (float)delta;
 
         // Find player reference lazily
