@@ -24,7 +24,6 @@ public partial class Player : CharacterBody2D
 
     private Vehicle _currentVehicle = null;
     public bool IsInVehicle => _currentVehicle != null;
-    private int _followerCount = 0;
 
     public override void _Ready()
     {
@@ -42,15 +41,13 @@ public partial class Player : CharacterBody2D
 
     public override void _UnhandledInput(InputEvent @event)
     {
-        // Handle carjack enter / exit / recruit
         if (Input.IsActionJustPressed("interact"))
         {
             if (_currentVehicle != null)
                 ExitVehicle();
-            else if (!TryRecruitNPC())
-                TryEnterVehicle();
+            else
+                TryEnterVehicle(); // RecruitSystem (child node) handles NPC dialogue via _Process
         }
-        // Also allow F (melee_attack) to exit vehicle for convenience
         else if (_currentVehicle != null && Input.IsActionJustPressed("melee_attack"))
         {
             ExitVehicle();
@@ -93,21 +90,6 @@ public partial class Player : CharacterBody2D
         }
 
         MoveAndSlide();
-    }
-
-    private bool TryRecruitNPC()
-    {
-        Godot.Collections.Array<Node> npcs = GetTree().GetNodesInGroup("npcs");
-        foreach (Node node in npcs)
-        {
-            if (node is NPC npc && npc.IsInRecruitRange(GlobalPosition))
-            {
-                npc.Recruit(_followerCount);
-                _followerCount++;
-                return true;
-            }
-        }
-        return false;
     }
 
     private void TryEnterVehicle()
