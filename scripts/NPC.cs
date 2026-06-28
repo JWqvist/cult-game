@@ -128,12 +128,14 @@ public partial class NPC : CharacterBody2D
 
         float distToPlayer = GlobalPosition.DistanceTo(_player.GlobalPosition);
 
-        // Check flee (only when heat >= 3)
-        if (_state != State.Flee && distToPlayer < FleeRadius && GameManager.Instance != null && GameManager.Instance.HeatLevel >= 3)
+        // Check flee — react to the authoritative HeatSystem (wanted stars).
+        // Crowds scatter once the player hits 2+ stars.
+        int wanted = HeatSystem.Instance?.WantedStars ?? 0;
+        if (_state != State.Flee && distToPlayer < FleeRadius && wanted >= 2)
         {
             _state = State.Flee;
         }
-        else if (_state == State.Flee && (distToPlayer > StopFleeRadius || (GameManager.Instance != null && GameManager.Instance.HeatLevel < 3)))
+        else if (_state == State.Flee && (distToPlayer > StopFleeRadius || wanted < 2))
         {
             _state = State.Idle;
             _stateTimer = 1f + GD.Randf() * 2f;

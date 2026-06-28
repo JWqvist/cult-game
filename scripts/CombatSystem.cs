@@ -11,7 +11,6 @@ public partial class CombatSystem : Node
     private CharacterBody2D _player;
     private Inventory _inventory;
     private Sprite2D _playerSprite;
-    private float _heatAccumulator = 0f;
 
     public override void _Ready()
     {
@@ -158,13 +157,16 @@ public partial class CombatSystem : Node
         }
     }
 
+    /// <summary>
+    /// Violence is a crime: feed the authoritative HeatSystem so police respond.
+    /// Each attack adds a fractional amount; HeatSystem owns the 0-5 scale,
+    /// police spawning and decay. (Previously this only bumped the legacy
+    /// GameManager.HeatLevel counter, which never triggered a police response.)
+    /// </summary>
+    private const float HeatPerAttack = 0.4f;
+
     private void RaiseHeat()
     {
-        _heatAccumulator += 0.5f;
-        if (_heatAccumulator >= 1f)
-        {
-            GameManager.Instance?.IncreaseHeat(1);
-            _heatAccumulator -= 1f;
-        }
+        HeatSystem.Instance?.AddHeat(HeatPerAttack);
     }
 }
