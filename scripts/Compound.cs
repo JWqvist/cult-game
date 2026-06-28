@@ -2,14 +2,16 @@ using Godot;
 
 /// <summary>
 /// Player's cult compound. Visual state changes based on CultSize thresholds.
-/// fence: always visible
-/// tent: visible when CultSize >= 5
-/// building: visible when CultSize >= 15
+/// fence:    always visible  (CultSize >= 1, i.e. player alone)
+/// tent:     visible when CultSize >= 3  (2+ followers)
+/// building: visible when CultSize >= 5  (4+ followers)
 /// Clears heat when player is inside (within HideRange).
 /// </summary>
 public partial class Compound : StaticBody2D
 {
     private const float HideRange = 150f;
+    private const int TentThreshold     = 3;
+    private const int BuildingThreshold = 5;
 
     private Node2D _fence;
     private Node2D _tent;
@@ -29,8 +31,8 @@ public partial class Compound : StaticBody2D
 
         int cultSize = GameManager.Instance.CultSize;
         _fence.Visible = true;
-        _tent.Visible = cultSize >= 5;
-        _building.Visible = cultSize >= 15;
+        _tent.Visible = cultSize >= TentThreshold;
+        _building.Visible = cultSize >= BuildingThreshold;
 
         // Lazily find player
         if (_player == null)
