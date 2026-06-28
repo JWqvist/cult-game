@@ -13,7 +13,13 @@ public partial class GameManager : Node
     // Player stats
     public float Money { get; private set; } = 0f;
     public int CultSize => 1 + Followers.Count;   // player + recruited followers
-    public int HeatLevel { get; private set; } = 0; // 0-5, police attention
+
+    // Legacy 0-5 heat accessor. HeatSystem is now the single source of truth
+    // (float scale, police spawning, decay); this mirrors it as a rounded int
+    // so older callers/readers stay consistent.
+    public int HeatLevel => HeatSystem.Instance != null
+        ? Mathf.Clamp(Mathf.RoundToInt(HeatSystem.Instance.HeatLevel), 0, 5)
+        : 0;
 
     // All recruited followers
     public List<Follower> Followers { get; private set; } = new List<Follower>();
@@ -70,14 +76,16 @@ public partial class GameManager : Node
 
     public void IncreaseHeat(int amount = 1)
     {
-        HeatLevel = Mathf.Clamp(HeatLevel + amount, 0, 5);
+        // Delegates to the authoritative HeatSystem so police respond to heat
+        // raised through the legacy API.
+        HeatSystem.Instance?.AddHeat(amount);
         EmitSignal(SignalName.StatsChanged);
         GD.Print("[GameManager] Heat level: ", HeatLevel);
     }
 
     public void DecreaseHeat(int amount = 1)
     {
-        HeatLevel = Mathf.Clamp(HeatLevel - amount, 0, 5);
+        HeatSystem.Instance?.AddHeat(-amount);
         EmitSignal(SignalName.StatsChanged);
     }
 }

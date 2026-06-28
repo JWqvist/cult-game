@@ -205,6 +205,7 @@ public partial class RecruitSystem : Node
         float stolen = MugMinMoney + GD.Randf() * (MugMaxMoney - MugMinMoney);
         GameManager.Instance.AddMoney(stolen);
         HeatSystem.Instance?.AddHeat(MugHeat);
+        MissionSystem.Instance?.ReportMug();   // mug missions count real muggings, not just kills
         ToastManager.Show("Mugged! +$" + (int)stolen, ToastManager.ColorMoney);
         GD.Print("[RecruitSystem] Mugged for $", stolen.ToString("F0"));
 
