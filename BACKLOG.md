@@ -86,8 +86,9 @@ Acceptance: Money accumulates, crimes raise heat, police responds.
 
 ---
 
-## Sprint 7 — Inner Circle + Delegation
+## Sprint 7 — Inner Circle + Delegation ✅ Done
 **Goal:** Assign roles to followers, passive actions
+**Status:** Merged in master — `scripts/InnerCircle.cs` (250 lines), `Follower.cs` (loyalty/roles), wired into GameManager/HUD/EndgameSystem. Tab toggles UI.
 
 Tasks:
 - Inner Circle UI: pick up to 3 followers from cult, assign role
@@ -100,8 +101,9 @@ Acceptance: Player can assign inner circle roles, see passive effects in action.
 
 ---
 
-## Sprint 8 — Endgame Paths (Phase 1)
+## Sprint 8 — Endgame Paths (Phase 1) ✅ Done
 **Goal:** Branching story paths begin to diverge
+**Status:** Merged in master — `scripts/StorySystem.cs` (milestones 10/30/75/150/200, 3-path choice) + `scripts/MissionSystem.cs` + `scripts/EndgameSystem.cs`.
 
 Tasks:
 - Story event system: trigger events at CultSize milestones (10, 30, 75, 150)
@@ -114,5 +116,10 @@ Tasks:
 
 ---
 
-## Sprint 9+ — Endgame + Polish
-TBD based on what path mechanics need.
+## Sprint 9 — Endgame Phase 2 ✅ Done
+**Status:** Merged in master (commit f8ea9c0) — path-specific mechanical effects (Waco heat decay, Scientology donation boost, HeavensGate recruiter speed).
+
+---
+
+## Sprint 10+ — Endgame + Polish
+TBD — needs concrete spec from Jeppe before auto-start (no acceptance criteria yet).
